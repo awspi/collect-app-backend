@@ -23,12 +23,14 @@
     "db": "rimraf ./src/entities & npx typeorm-model-generator -h localhost -d jiaozuoye -p 3306 -u root -x 12345678 -e mysql -o ./src/entities --noConfig true --ce pascal --cp camel"
   },
   "dependencies": {
+    "@fastify/static": "^6.6.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/platform-fastify": "^9.2.1",
+    "@nestjs/swagger": "^6.1.4",
     "@nestjs/typeorm": "^9.0.1",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.7",

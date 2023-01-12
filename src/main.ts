@@ -6,10 +6,11 @@ import {
 } from '@nestjs/platform-fastify';
 import fastify from 'fastify';
 import { AppModule } from './app.module';
-import { HttpExceptionFilter } from './common/exception/base.exception.filter';
-import { AllExceptionsFilter } from './common/exception/http.exception.filter';
+import { AllExceptionsFilter } from './common/exception/base.exception.filter';
+import { HttpExceptionFilter } from './common/exception/http.exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { FastifyLogger } from './common/logger';
+import { generateDocument } from './doc';
 
 async function bootstrap() {
   const fastifyInstance = fastify({
@@ -28,6 +29,8 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter(), new HttpExceptionFilter());
   //? 统一响应体格式
   app.useGlobalInterceptors(new TransformInterceptor());
+  //? Swagger
+  generateDocument(app);
   await app.listen(3001);
 }
 bootstrap();
