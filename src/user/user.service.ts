@@ -23,7 +23,7 @@ export class UserService {
       this.productRepository
         .createQueryBuilder('students')
         // .innerJoinAndSelect('student_tag')
-        .where('students.id = :')
+        // .where('students.id = :')
         .getMany()
     );
   }
