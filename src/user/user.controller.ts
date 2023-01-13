@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { Public } from '@/common/guards/constants';
 
 @Controller({
   path: 'user',
@@ -27,9 +28,10 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+    return this.userService.findOne(id);
   }
 
   // @Patch(':id')

@@ -5,6 +5,8 @@ export const BUSINESS_ERROR_CODE = {
   COMMON: 10001,
   // 禁止访问
   ACCESS_FORBIDDEN: 10002,
+  //
+  TOKEN_INVALID: 10003,
 };
 
 type BusinessError = {

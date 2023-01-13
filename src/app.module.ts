@@ -16,6 +16,9 @@ import { UserModule } from './user/user.module';
 import { StudentTag } from './entities/StudentTag';
 import { StudentClassses } from './entities/StudentClassses';
 import { Tags } from './entities/Tags';
+import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 @Module({
   imports: [
     // ConfigModule.forRoot({
@@ -45,9 +48,10 @@ import { Tags } from './entities/Tags';
       ],
       synchronize: true,
     }),
+    AuthModule,
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
 export class AppModule {}
