@@ -1,4 +1,4 @@
-import { VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
@@ -24,7 +24,12 @@ async function bootstrap() {
 
   //? 接口版本化管理
   app.enableVersioning({ type: VersioningType.URI, defaultVersion: '1' });
-
+  //? 全局拦截器pipe
+  app.useGlobalPipes(
+    new ValidationPipe({
+      // whiteList:true //去除类上不存在的字段
+    }),
+  );
   //? 全局异常过滤器
   app.useGlobalFilters(new AllExceptionsFilter(), new HttpExceptionFilter());
   //? 统一响应体格式

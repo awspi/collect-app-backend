@@ -1,30 +1,31 @@
 import { BusinessException } from '@/common/exception/business.exception';
-import { Public } from '@/common/guards/constants';
 import { Students } from '@/entities/Students';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
-
+import * as argon2 from 'argon2';
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(Students)
     private studentRepository: Repository<Students>,
   ) {}
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+
+  async create(user: Partial<Students>) {
+    //user
+    const userTmp = await this.studentRepository.create(user);
+    //密码加密
+    userTmp.password = await argon2.hash(userTmp.password);
+    const { password, ...res } = await this.studentRepository.save(userTmp);
+
+    return res;
   }
 
-  findAll() {
-    return `This action returns all user`;
-  }
-
-  async findOne(id: string) {
-    const res = await this.studentRepository
-      .createQueryBuilder('students')
-      .where('students.id = :id', { id })
-      .getOne();
+  async findOneById(id: number) {
+    const res = await this.studentRepository.findOne({
+      where: { id: id },
+      relations: ['school', 'studentClassses'],
+    });
     if (!res) {
       throw new BusinessException(`id为${id}的用户不存在`);
     }
@@ -36,22 +37,18 @@ export class UserService {
   //   return `This action updates a #${id} user`;
   // }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
-
   //* 根据username查找user
-  async findOneByXh(xh: string) {
-    return this.studentRepository
-      .createQueryBuilder('students')
-      .where('students.xh = :xh', { xh })
-      .getOne();
+  async findOneByQQ(qq: string) {
+    return await this.studentRepository.findOne({
+      where: { qq },
+      relations: ['school', 'studentClassses'],
+    });
   }
-  //* 根据username查找user
-  async verifyUser(xh: string, password: string) {
-    return this.studentRepository
+  //* 根据qq查找user
+  async verifyUserByQQ(qq: string, password: string) {
+    return await this.studentRepository
       .createQueryBuilder('students')
-      .where('students.xh = :xh', { xh })
+      .where('students.qq = :qq', { qq })
       .andWhere('students.password = :password', { password })
       .getOne();
   }

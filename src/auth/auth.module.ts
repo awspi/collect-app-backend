@@ -6,10 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthService } from './auth.service';
 import { jwtConstants } from '@/common/guards/constants';
 import { JwtModule } from '@nestjs/jwt';
-import { JWTStrategy } from './jwt-auth.strategy';
 import { AuthController } from './auth.controller';
+import { TagService } from '@/tag/tag.service';
+import { StudentTag } from '@/entities/StudentTag';
+import { Tags } from '@/entities/Tags';
+import { JWTStrategy } from './auth.strategy';
 @Module({
   imports: [
+    PassportModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: jwtConstants.secret,
@@ -17,12 +21,11 @@ import { AuthController } from './auth.controller';
         expiresIn: jwtConstants.expiresIn,
       },
     }),
-    TypeOrmModule.forFeature([Students]),
-    PassportModule,
+    TypeOrmModule.forFeature([Students, StudentTag, Tags]),
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JWTStrategy],
+  providers: [AuthService, JWTStrategy, TagService],
   exports: [AuthService],
 })
 export class AuthModule {}

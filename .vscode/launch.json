@@ -7,17 +7,15 @@
   
 
     {
-      "type": "node",
-      "request": "launch",
       "name": "Launch via yarn",
+      "request": "launch",
       "runtimeArgs": ["start:hotdev"],
       "console": "integratedTerminal",
       "runtimeExecutable": "yarn",
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "program": "${file}",
-      
+      "type": "node",      
     }
   ]
 }
