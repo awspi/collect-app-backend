@@ -10,6 +10,7 @@ import {
 import { ClassCollects } from './ClassCollects';
 import { Schools } from './Schools';
 import { StudentClassses } from './StudentClassses';
+import { StudentTag } from './StudentTag';
 
 @Index('school_id', ['schoolId'], {})
 @Entity('classes', { schema: 'jiaozuoye' })
@@ -35,4 +36,7 @@ export class Classes {
 
   @OneToMany(() => StudentClassses, (studentClassses) => studentClassses.class)
   studentClassses: StudentClassses[];
+
+  @OneToMany(() => StudentTag, (studentTag) => studentTag.class)
+  studentTags: StudentTag[];
 }

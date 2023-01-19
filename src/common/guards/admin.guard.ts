@@ -1,7 +1,7 @@
 import { Students } from '@/entities/Students';
 import { UserService } from '@/user/user.service';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-// import { Observable } from 'rxjs';
+import { BusinessException } from '../exception/business.exception';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -15,12 +15,13 @@ export class AdminGuard implements CanActivate {
       req.user.userId,
     )) as Students;
     const classList = user.studentClassses;
+    const classId = req.body.classId;
 
-    //todo const classId=?
-    // const isAdmin=classList.find(item=>item.classId===classId)?.permisson===1
-    // if (isAdmin) {
-    //   return true;
-    // }
+    const targetClass = classList.find((item) => item.classId === classId);
+
+    if (targetClass?.permisson === 1) {
+      return true;
+    }
     return false;
   }
 }

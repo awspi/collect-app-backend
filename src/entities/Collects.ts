@@ -12,8 +12,8 @@ import { Schools } from './Schools';
 import { Students } from './Students';
 import { Tasks } from './Tasks';
 
-@Index('school_id', ['schoolId'], {})
 @Index('publisher_id', ['publisherId'], {})
+@Index('school_id', ['schoolId'], {})
 @Entity('collects', { schema: 'jiaozuoye' })
 export class Collects {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })

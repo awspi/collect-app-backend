@@ -19,13 +19,17 @@ export class TagService {
   async findTagById(id) {
     return await this.tagsRepository.find({ where: { id } });
   }
-  async findTagsBySid(id: number) {
+  async findTagsBySid(id: number, classId: number) {
+    console.log(classId);
     const tagIdList = await this.studentTagRepository.find({
       where: {
         studentId: id,
+        classId,
       },
     });
     const res = [];
+    console.log(tagIdList);
+
     for (let i = 0; i < tagIdList.length; i++) {
       res.push(await this.findTagById(tagIdList[i].tagId));
     }
@@ -33,11 +37,12 @@ export class TagService {
   }
 
   //
-  async appendStudentTagBySid(id, tagId = 3) {
+  async appendStudentTagBySid(id, classId, tagId = 3) {
     const res = await this.studentTagRepository.findOne({
       where: {
         studentId: id,
         tagId,
+        classId,
       },
     });
     if (res) {
@@ -47,12 +52,13 @@ export class TagService {
     const stuTagTemp = await this.studentTagRepository.create({
       studentId: id,
       tagId,
+      classId,
     });
     const stuTagRes = await this.studentTagRepository.save(stuTagTemp);
 
     return stuTagRes;
   }
-  async removeStudentTagBySid(id, tagId) {
+  async removeStudentTagBySid(id, classId, tagId) {
     if (tagId === 3) {
       throw new BusinessException('"学生"tag为默认,无法删除');
     }
@@ -60,6 +66,7 @@ export class TagService {
       where: {
         studentId: id,
         tagId,
+        classId,
       },
     });
     if (!record) {

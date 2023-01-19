@@ -11,8 +11,8 @@ import { Attachments } from './Attachments';
 import { Collects } from './Collects';
 import { Students } from './Students';
 
-@Index('user_id', ['userId'], {})
 @Index('collect_id', ['collectId'], {})
+@Index('user_id', ['userId'], {})
 @Entity('tasks', { schema: 'jiaozuoye' })
 export class Tasks {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
