@@ -15,7 +15,7 @@ export class AdminGuard implements CanActivate {
       req.user.userId,
     )) as Students;
     const classList = user.studentClassses;
-    const classId = req.body.classId;
+    const classId = parseInt(req.body.classId);
 
     const targetClass = classList.find((item) => item.classId === classId);
 
