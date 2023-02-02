@@ -26,6 +26,10 @@ export class CollectController {
   async detail(@Query('collectId') cid) {
     return this.collectService.getCollectById(cid);
   }
+  @Get('/completion')
+  async completion(@Query('collectId') cid) {
+    return this.collectService.getCollectCompletion(cid);
+  }
   @Get('/user')
   async user(@Query('userId') uid) {
     return this.collectService.getCollectListByUid(uid);

@@ -19,6 +19,8 @@ import { Tags } from './entities/Tags';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { TagModule } from './tag/tag.module';
+import { ClassModule } from './class/class.module';
+import { CollectModule } from './collect/collect.module';
 @Module({
   imports: [
     // ConfigModule.forRoot({
@@ -51,6 +53,8 @@ import { TagModule } from './tag/tag.module';
     AuthModule,
     UserModule,
     TagModule,
+    ClassModule,
+    CollectModule,
   ],
   controllers: [AppController],
   providers: [AppService],

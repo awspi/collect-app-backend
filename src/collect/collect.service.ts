@@ -2,6 +2,8 @@ import { ClassService } from '@/class/class.service';
 import { BusinessException } from '@/common/exception/business.exception';
 import { ClassCollects } from '@/entities/ClassCollects';
 import { Collects } from '@/entities/Collects';
+import { Students } from '@/entities/Students';
+import { Tasks } from '@/entities/Tasks';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,6 +16,10 @@ export class CollectService {
     private classCollectsRepository: Repository<ClassCollects>,
     @InjectRepository(Collects)
     private collectsRepository: Repository<Collects>,
+    @InjectRepository(Tasks)
+    private taskRepository: Repository<Tasks>,
+    @InjectRepository(Students)
+    private stuRepository: Repository<Students>,
   ) {}
   async getCollectListByCid(classId) {
     const list = await this.classCollectsRepository.find({
@@ -37,6 +43,52 @@ export class CollectService {
       where: { id },
     });
   }
+  async getCollectCompletion(cid) {
+    //collectsRepository
+    const { totalPeople, finishedPeople } =
+      await this.collectsRepository.findOne({
+        where: { id: cid },
+      });
+    //
+
+    const tasklist = await this.taskRepository.find({
+      where: { collectId: cid },
+    });
+    const completeList = [];
+    const completeNameList = [];
+    for (let i = 0; i < tasklist.length; i++) {
+      const stu = await this.stuRepository.findOne({
+        where: { id: tasklist[i].userId },
+      });
+      completeNameList.push(stu.name);
+      completeList.push({
+        name: stu.name,
+        comment: tasklist[i].comment,
+        finish_time: tasklist[i].finishTime,
+        attachment_url: tasklist[i].attachmentUrl,
+      });
+    }
+    const { classId } = await this.classCollectsRepository.findOne({
+      where: { collectId: cid },
+    });
+    const totalStuList = await this.classService.getStudentsByCid(classId);
+    const filtered: Students[] = totalStuList.filter(
+      //不在已完成的列表里就是未完成
+      (stu) => completeNameList.indexOf(stu.name) === -1,
+    );
+    const incompleteList = filtered.map((stu) => ({
+      name: stu.name,
+      xh: stu.xh,
+    }));
+
+    return {
+      totalPeople,
+      finishedPeople,
+      completeList,
+      incompleteList,
+    };
+  }
+
   async publish(uid, body) {
     // //* class
     const { classId } = body;
