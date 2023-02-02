@@ -23,5 +23,6 @@ import { Tasks } from '@/entities/Tasks';
   ],
   providers: [CollectService, ClassService],
   controllers: [CollectController],
+  exports: [CollectService],
 })
 export class CollectModule {}

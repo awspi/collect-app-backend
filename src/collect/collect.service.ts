@@ -25,10 +25,11 @@ export class CollectService {
     const list = await this.classCollectsRepository.find({
       where: { classId },
     });
+    const className = await this.classService.getClassNameById(classId);
     const res = [];
     for (let i = 0; i < list.length; i++) {
       const collect = await this.getCollectById(list[i].collectId);
-      res.push(collect);
+      res.push({ ...collect, classId, className });
     }
     return res;
   }
@@ -36,7 +37,17 @@ export class CollectService {
     const list = await this.collectsRepository.find({
       where: { publisherId: uid },
     });
-    return list;
+    const res = [];
+    for (let i = 0; i < list.length; i++) {
+      const collect = list[i];
+      const { id } = collect;
+      const { classId } = await this.classCollectsRepository.findOne({
+        where: { collectId: id },
+      });
+      const className = await this.classService.getClassNameById(classId);
+      res.push({ ...collect, classId, className });
+    }
+    return res;
   }
   async getCollectById(id) {
     return await this.collectsRepository.findOne({

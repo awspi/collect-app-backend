@@ -121,4 +121,9 @@ export class ClassService {
 
     return classRes;
   }
+
+  async getClassNameById(id) {
+    const { name } = await this.classRepository.findOne({ where: { id } });
+    return name;
+  }
 }
