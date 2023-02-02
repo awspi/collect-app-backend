@@ -4,9 +4,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as argon2 from 'argon2';
+import { ClassService } from '@/class/class.service';
 @Injectable()
 export class UserService {
   constructor(
+    private readonly classService: ClassService,
     @InjectRepository(Students)
     private studentRepository: Repository<Students>,
   ) {}
@@ -29,6 +31,14 @@ export class UserService {
     if (!res) {
       throw new BusinessException(`id为${id}的用户不存在`);
     }
+    const studentClassses = [];
+    for (let i = 0; i < res.studentClassses.length; i++) {
+      const { classId, permisson } = res.studentClassses[i];
+      const className = await this.classService.getClassNameById(classId);
+      studentClassses.push({ classId, className, permisson });
+    }
+    res.studentClassses = studentClassses;
+
     const { password, ...left } = res;
     return left;
   }
@@ -39,17 +49,25 @@ export class UserService {
 
   //* 根据username查找user
   async findOneByQQ(qq: string) {
-    return await this.studentRepository.findOne({
+    const res = await this.studentRepository.findOne({
       where: { qq },
       relations: ['school', 'studentClassses'],
     });
+    const studentClassses = [];
+    for (let i = 0; i < res.studentClassses.length; i++) {
+      const { classId, permisson } = res.studentClassses[i];
+      const className = await this.classService.getClassNameById(classId);
+      studentClassses.push({ classId, className, permisson });
+    }
+
+    return { ...res, studentClassses };
   }
-  //* 根据qq查找user
-  async verifyUserByQQ(qq: string, password: string) {
-    return await this.studentRepository
-      .createQueryBuilder('students')
-      .where('students.qq = :qq', { qq })
-      .andWhere('students.password = :password', { password })
-      .getOne();
-  }
+  // //* 根据qq查找user
+  // async verifyUserByQQ(qq: string, password: string) {
+  //   return await this.studentRepository
+  //     .createQueryBuilder('students')
+  //     .where('students.qq = :qq', { qq })
+  //     .andWhere('students.password = :password', { password })
+  //     .getOne();
+  // }
 }
